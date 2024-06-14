@@ -44,9 +44,21 @@ module top;
     .CarryOut(intf.carry_out)
   );
   
+  
+  //Interfacing	
+  //Interface is a static entity so it can not be instantiated in any classes as they are dynamic so we need to make a handle in top module to further use 
+  //Interface is required by monitor.sv and agent.sv
+  initial begin
+    uvm_config_db #(virtual alu_interface)::set(null,"*","vif",intf);
+  end
+  //set method is used to create the handle
+  //get method is used in driver.sv and monitor.sv
+  //the best way is to first pass this test then to env then to agent and then todriver and monitor
+  
+  
   //start the test
   initial begin
-    run_test();  
+    run_test("alu_test");  
   end
   
   
