@@ -3,6 +3,9 @@ class alu_test extends uvm_test;
   //declare macros which are usefull
   `uvm_component_utils(alu_test)
   
+  alu_env env;
+  alu_test_sequence test_seq;
+  alu_base_sequence reset_seq;
   
   //write a contructor 
   function new(string name = "alu_test", uvm_component parent);
@@ -20,12 +23,16 @@ class alu_test extends uvm_test;
     super.build_phase(phase);
     `uvm_info("TEST_CLASS", "Build Phase", UVM_HIGH)
     
+    env = alu_env::type_id::create("env", this);
+    
   endfunction: build_phase
   
   //connect phase
   function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
     `uvm_info("TEST_CLASS", "Connect Phase", UVM_HIGH)
+    
+    //connect monitor with scoreboard
     
   endfunction: connect_phase
   
@@ -34,8 +41,24 @@ class alu_test extends uvm_test;
   //functions cannot include any time consuming statements
   task run_phase(uvm_phase phase);
     super.run_phase(phase);
+    `uvm_info("TEST_CLASS", "Run Phase", UVM_HIGH)
     
-    //logic
+    phase.raise_objection(this);
+    
+    //strat our sequences
+    //reset_seq
+    reset_seq = alu_base_sequence::type_id::create("reset_seq");
+    reset_seq.start(env.agnt.seqr);
+    #10;
+    
+    repeat(25) begin
+      //test_seq
+      test_seq = alu_test_sequence::type_id::create("test_seq");
+      test_seq.start(env.agnt.seqr);
+      #10;
+    end
+    phase.drop_objection(this);
+    
     
   endtask: run_phase
   
