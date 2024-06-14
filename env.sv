@@ -3,7 +3,8 @@
 class alu_env extends uvm_env;
   //declare macros which are usefull
   `uvm_component_utils(alu_env)
-  
+  alu_agent agnt;
+  alu_scoreboard scb;
   
   //write a contructor 
   function new(string name = "alu_env", uvm_component parent);
@@ -21,12 +22,17 @@ class alu_env extends uvm_env;
     super.build_phase(phase);
     `uvm_info("ENV_CLASS", "Build Phase", UVM_HIGH)
     
+    agnt = alu_agent::type_id::create("agnt", this);
+    scb = alu_scoreboard::type_id::create("scb",this);
+    
   endfunction: build_phase
   
   //connect phase
   function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
     `uvm_info("ENV_CLASS", "Connect Phase", UVM_HIGH)
+    
+    agnt.mon.monitor_port.connect(scb.scoreboard_port);
     
   endfunction: connect_phase
   
